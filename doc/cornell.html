@@ -1,0 +1,385 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<!-- saved from url=(0097)http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//index.htm -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   
+   <meta name="Author" content="Philip Ching">
+   <meta name="GENERATOR" content="Mozilla/4.79 [en] (Win98; U) [Netscape]">
+   <title>Untitled</title>
+</head>
+<body background="./cornell_files/Wallpaper.gif">
+
+<blockquote>
+<blockquote>&nbsp;
+<center>
+<p><font size="+3">Synthesis of a LED-Candle with Realistic Dynamics</font>
+<br>ver 2.0
+</p><p><img src="./cornell_files/candleanimated.gif" height="124" width="56">
+</p><p>ECE 693 Project
+<br>Cornell University, Jan 2002
+<br>By: Philip Ching
+<br><a href="mailto: pc59@cornell.edu">pc59@cornell.edu</a></p></center>
+
+<p>&nbsp;&nbsp;&nbsp; <a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//index.htm#Introduction">Introduction</a>
+<br>&nbsp;&nbsp;&nbsp; <a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//index.htm#Objectives">Objectives</a>
+<br>&nbsp;&nbsp;&nbsp; <a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//index.htm#Flame Dynamics">Flame Dynamics</a>
+<br>&nbsp;&nbsp;&nbsp; <a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//index.htm#Breeze Sensors">Breeze Sensors</a>
+<br>&nbsp;&nbsp;&nbsp; <a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//index.htm#Improvements">Improvements</a>
+<br>&nbsp;&nbsp;&nbsp; <a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//index.htm#Code">Code</a>
+<br>&nbsp;&nbsp;&nbsp; <a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//index.htm#Appendix">Appendix</a>
+<br>&nbsp;&nbsp;&nbsp; <a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//index.htm#References">References</a>
+<br>&nbsp;&nbsp;&nbsp; <a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//index.htm#Conclusion">Conclusion</a>
+</p><p><a name="Introduction"></a><font size="+2">Introduction</font>
+</p><blockquote>&nbsp;&nbsp;&nbsp; In my Master of Engineering project, I design
+and construct a LED-based (Light-Emitting-Diode) candle simulator.&nbsp;
+The candle is
+<br>microcontroller-based having time-variable light output, with statistics
+similar to real candles, as well as breeze sensors.&nbsp; Factors such
+<br>as flame dynamics (flicker) in breezy and still air environments are
+considered.</blockquote>
+<a name="Objectives"></a><font size="+2">Objectives</font>
+<blockquote>The project objectives will be listed and briefly described:
+<p>· The primary objective is that the candle must look convincingly
+like a flame.&nbsp; What must a designer consider so that the candle, as
+stated previously, looks real?
+<br>· The candle must have time-variable light output.&nbsp; Anyone
+who looks at a candle flame will notice that it is not always periodic,
+but seems to have a random component.
+<br>· The candle must have breeze sensors.&nbsp; A candle dances
+when subjected to light breezes, or blows out when the breeze is too strong.
+<br>· Everything must be in real-time.&nbsp; How convincing would
+a candle look if you blew on it, and the flicker dynamics changed 3 minutes
+later?
+<br>· Packaging.&nbsp; It should be packaged to look like a real
+candle.
+</p><p>Each of these objectives has been accomplished and will be discussed
+in detail.
+<br>&nbsp;</p></blockquote>
+<a name="Flame Dynamics"></a><font size="+2">Flame Dynamics</font>
+<br>&nbsp;
+<blockquote>&nbsp;&nbsp;&nbsp; The flame dynamics are simulated using time-variable
+light output.&nbsp; In [1], Fujiwara et al found that the flame dynamics
+give off a flat power spectrum at low frequencies and falls off as 1/f
+n power spectrum with n = 2.12 ± 0.7 (see figure 1).&nbsp; The �n�
+that Fujiwara found is not distinguishable from the slope of a one-pole
+digital low pass filter.&nbsp; A simple low-pass filter has a slope of
+2.0.&nbsp; Thus, I tried passing white noise through a digital low pass
+filter for the respective reasons previously mentioned.
+<center>
+<p><img src="./cornell_files/whitenoise.jpg" height="235" width="252">
+<br><b>Figure 1</b> � Idea behind the time variable-light output</p></center>
+
+<p>White noise was generated using a random number generator written in
+�C� adapted from [3].&nbsp; The following excerpt of code is taken from
+the final program:
+</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+next = next * 1103515245 + 12345;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+randomNum = (unsigned int)(next/65536) % 32768;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+finalRandomNum = randomNum;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+finalRandomNum = finalRandomNum/32767 - 0.5;
+</p><p>(where �next� is an �unsigned long int�, and �finalRandomNum� is a �float�).
+<br>&nbsp;&nbsp;&nbsp; A uniformly distributed number between -0.5 and
+0.5 is generated, with an average value of 0.
+<br>The following equations are used to calculate the new number to set
+the intensity of the light:
+<br>&nbsp;
+<br>&nbsp;
+<br>
+<br>
+</p><center>
+<p><img src="./cornell_files/Equation1.jpg" height="32" width="168"></p></center>
+
+<p>adapted from [4], where w is the white noise input and alpha, a, which
+serves as a �weight�, depending a smaller alpha placing more emphasis on
+the white noise on the next calculation.&nbsp; Zt is the input at time
+t, with an initially value of zero at t = 0.
+</p><p>Alpha is calculated as follows:
+</p><center>
+<p><img src="./cornell_files/Equation2.jpg" height="46" width="99"></p></center>
+
+<p>&nbsp;&nbsp;&nbsp; Alpha is calculated as specified because that is
+how much the signal would decay if the filter�s impulse response were exponential
+in with time constant of t.&nbsp; Dt is equally to the task 1 time of 64
+milli-seconds, which determines how often the new number to set the intensity
+of the light in calculated.
+</p><center>
+<p><img src="./cornell_files/Equation3.jpg" height="48" width="93"></p></center>
+
+<p>therefore,
+</p><center>
+<p><img src="./cornell_files/Equation4.jpg" height="50" width="74"></p></center>
+
+<p>where tau, t is a time constant.
+<br>&nbsp;&nbsp;&nbsp; The final new number to set the intensity of the
+light is calculated as follows:
+</p><center>
+<p><img src="./cornell_files/Equation5.jpg" height="31" width="246"></p></center>
+
+<p>where Iscale increases the intensity of the light, with blow being a
+constant that scales raw white noise, and Ioffset shifts the intensity
+value.&nbsp; Ioffset is added since z will have a mean value of zero and
+we want the light to stay on.&nbsp; Iscale is the average value of the
+light, and blow adds in high frequency white noise that looks like flicker
+when you blow on the thermistor.
+</p><p>&nbsp;&nbsp;&nbsp; The software generated white noise and the low-pass
+filter controls specific hardware in the Atmel 90s8535 microcontroller
+used, such as the �Pulse Width Modulator� (PWM).&nbsp; When the PWM mode
+is selected, Timer/Counter1, the Output Compare Register1A (OCR1A) form
+a dual 8-bit (or 9-, 10-bit), free running, glitch-free and phase-correct
+PWM with outputs on the PORT D5 pin.&nbsp; [2]
+<br>&nbsp;</p></blockquote>
+<a name="Breeze Sensors"></a><font size="+2">Breeze Sensors</font>
+<blockquote>The detection of breezes in the environment is accomplished
+using a thermistor.
+<br>&nbsp;
+<br>&nbsp;
+<br>
+<br>
+<center>
+<p><img src="./cornell_files/Thermistor.jpg" height="282" width="200">
+<br><b>Figure 2</b> � Breeze Sensor Circuit</p></center>
+
+<p><br>
+<br>
+<br>
+<br>
+</p><p>&nbsp;&nbsp;&nbsp; The principle behind a thermistor is that the resistance
+changes as a function of temperature.&nbsp; As the thermistor heats up,
+the resistance decreases, while the resistance increases with a decrease
+in temperature.&nbsp; Enough current will heat the thermistor above ambient
+temperature.&nbsp; The thermistor requires three milliwatts to heat it
+one degree Celsius.&nbsp; With this bias, the temperature is approximately
+50 degrees Celsius.&nbsp; The maximum power rating of the thermistor is
+0.100 watts.
+</p><p>&nbsp;&nbsp;&nbsp; Because it is self-heated, with a gentle breeze,
+the thermistor decreases in temperature, the resistance increases, and
+the voltage across the 100ohm and thus, the voltage read by the analog-to-digital
+converter decreases.&nbsp; The thermistor changes about 4% per degree.&nbsp;
+The ADC value is represented by 8-bits.&nbsp; Approximately three bits
+change when there is there is a 0.050-volt change after a breeze starts.
+</p><p>&nbsp;&nbsp;&nbsp; With the breeze sensors, I used a state-machine to
+change the system depending on whether the candle lies in a still-air or
+breezy environment.
+<br>&nbsp;
+</p><p><i>State Diagram</i>
+<br>&nbsp;
+</p><blockquote>&nbsp;&nbsp;&nbsp; The state diagram of the breeze sensor is
+shown in figure 3.&nbsp;&nbsp;&nbsp; The state diagram consists primarily
+of 6 states.&nbsp; I described the possible environment conditions to be
+still-air, or possible with a light or strong breeze blowing.&nbsp; The
+states �blow�, �light�, and �strong� contain an addition condition with
+checks whether there is a breeze that is strong enough to blow out the
+candle.&nbsp; When this condition occurs, the system shuts off the LED.
+<p>&nbsp;&nbsp;&nbsp; A description of each state is given:</p></blockquote>
+
+<blockquote>· �No Breeze� � There is currently no breeze blowing.&nbsp;
+This state asks, �Is the voltage above a certain threshold voltage, Vt?�
+If yes, enter state �Blow�, otherwise, there�s still no breeze.
+<br>· �Blow� � There�s a breeze blowing.&nbsp; This state asks,
+�Is the voltage change greater than VStrong?�, where VStrong is the minimum
+voltage change considered to be a strong breeze.&nbsp; If yes, enter state
+�Strong Breeze�, otherwise, it�s a light breeze, and so enter state �Light
+Breeze�.
+<br>· �Light Breeze� � There�s a light breeze blowing.&nbsp; This
+state asks, �Is the voltage change greater than VStrong?�.&nbsp; If yes,
+enter state �Strong Breeze�, otherwise, enter state �Light Helper�.
+<br>· �Light Helper� � There�s a light breeze blowing.&nbsp; This
+state determines if the voltage change is greater than Vt.&nbsp; If it
+is, it�s a light breeze, otherwise, there�s no longer a breeze blowing,
+so enter state �No Breeze�.
+<br>· �Strong Breeze� � There�s a strong breeze blowing.&nbsp; This
+state determines if the voltage change is greater than VStrong.&nbsp; If
+it isn�t, enter state �Blowing�.&nbsp; If it is, remain in current state.
+<br>· �Blowing� � There�s a strong breeze blowing.&nbsp; This state
+asks, �Is the voltage change above Vt?�&nbsp; If it is, enter state �Light
+Breeze� because the breeze is light, but if not, enter state �No Breeze�
+because there�s no longer a breeze blowing.</blockquote>
+</blockquote>
+
+<center><img src="./cornell_files/StateDiagram.jpg" height="409" width="563">
+<br><b>Figure 3</b> � State Machine for Breeze detection.&nbsp; The condition
+for the blownout candle is detected in the
+<br>&nbsp;&nbsp;&nbsp;&nbsp; strong breeze, light breeze and blow states.&nbsp;
+The system shuts off the LED and disables all
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+interrupts when the blowout condition is met.</center>
+
+<blockquote>&nbsp;
+<br>&nbsp;&nbsp;&nbsp; I chose to use a state machine instead of a continuous
+controller for two main reasons.&nbsp; The main reason being that with
+a continuous controller, I would have to find a specific relationship between
+the four parameters in my candle.&nbsp; Time of course was another factor,
+since I wanted to have an easier time testing the complete circuit for
+robustness.&nbsp; Given more time, I most definitely would have used a
+continuous controller.
+<p>&nbsp;&nbsp;&nbsp; The ADC value is read once for every 100 milli-seconds.&nbsp;
+Depending on the amount of voltage change, the �no breeze�, �light breeze�,
+or �strong breeze� parameters are loaded.&nbsp; I wrote specific �methods�
+in my code that are executed whenever any of the previous mentioned states
+are entered from a different state.&nbsp; The system interrupts are temporarily
+halted and the new parameters are loaded, which then the system resumes
+with the new parameters.
+</p><p>&nbsp;&nbsp;&nbsp; Before using the statemachine, a period of time for
+the system to settle is necessary.&nbsp; This is required since the thermistor,
+with a still-air time constant of approximately one second, needs time
+to heat up (and thus its resistance changes), and after it stabilizes,
+the ADC value is read in, which serves as the �zero-point�.&nbsp; After
+the �zero-point� is obtained, it takes approximately 200-300 milliseconds
+for a change in the ADC value to stabilize.
+</p><p>&nbsp;&nbsp;&nbsp; Testing the state-machine required reading the output
+from the microcontroller�s RS232 connection to a PC.&nbsp; The monitor
+displayed the strategically placed printout statements throughout my code
+via the microcontroller�s Universal Asynchronous Receiver and Transmitter
+(UART), which would tell me how much the voltage changed and which state
+the system is currently in.&nbsp; Thus, I was fully aware of what was going
+on in the system.</p></blockquote>
+
+<blockquote>&nbsp;</blockquote>
+<a name="Improvements"></a><font size="+2">Improvements</font>
+<blockquote>After completion of the original candle, several improvements
+were made, which include:
+<blockquote>1) improved flame dynamics using a statemachine
+<br>2) implementation using a continuous controller
+<br>3) new packaging</blockquote>
+
+<p><br><i>flame dynamics</i>
+<br>&nbsp;
+</p><blockquote>&nbsp;&nbsp;&nbsp; The flame dynamics of the original version
+as described above did not handle extremely breezy environments well.&nbsp;
+The new state machine was altered to take into account extremely long breezes.&nbsp;
+The basic operating principle is simple.&nbsp; At startup, continuously
+compare the current ADC value to the last five ADC values, if there are
+at least three matches with the history table, the current ADC value becomes
+the "Vzero" value.&nbsp; The Vzero serves as a base to compare future voltage
+changes in the system.&nbsp; Previously, the original state machine waited
+five seconds before taking in a reading.&nbsp; The drawback of that approach
+is that if the thermistor wasn't sitting in a still air environment, the
+initial reading may not be accurate, thus, the system dynamics will be
+affected negatively.
+<p>&nbsp;&nbsp;&nbsp; Now, why did i chose five previous values instead
+of more (or less)?.&nbsp; Four and fewer did not give a 'good' Vzero.&nbsp;
+I wanted the system to have as accurate of a Vzero value as possible, yet,
+not stall in the startup state on the condition when the ADC value bounces
+between two values.&nbsp; At initial startup, the thermistor heats up and
+the ADC changes in one direction only in a still air environment.
+</p><p>&nbsp;&nbsp;&nbsp; A specific state called "reheat" was added so that
+the thermistor was fully reheated <u>before</u> calculating another voltage
+change.&nbsp; This forced the system to take extremely accurate voltage
+changes.&nbsp; The downside of this approach is the the system must 'reset'
+to the Vzero voltage point, and this prevents the microcontroller from
+detecting continuously changing breezes in the environment.&nbsp; To remedy
+this, I replaced the state-machine with a continuous controller (<a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//index.htm#continuous">see
+below</a>)
+</p><p>&nbsp;&nbsp;&nbsp; The state diagram with improved dynamics is as follows:
+<br>&nbsp;
+<br>&nbsp;
+<br>
+<br>
+</p><center>
+<p><img src="./cornell_files/stateDiagramImproved.JPG" height="647" width="1177">
+<br><b>Figure 6</b> - State-Machine with improved dynamics.&nbsp; Notice
+the added reheat state.</p></center>
+
+<p><br>
+<br>
+<br>
+<br>
+</p><p><a name="continuous"></a><i>continuous controller upgrade</i>
+<br>&nbsp;
+</p><blockquote>&nbsp;&nbsp;&nbsp; The second improvement&nbsp; replaced the
+statemachine with a continuous controller.&nbsp; The continuous controller
+still begins exactly like the statemachine described above, with ADC readings
+and history comparisons.&nbsp; However, after the Vzero value has been
+obtained, we "continuously" read the ADC value.&nbsp; I found a relationship
+between the change in voltage and the four prime factors: I_offset, I_scale,
+alpha, and blow.&nbsp; These parameters were previously <a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//index.htm#Flame Dynamics">described</a>.&nbsp;
+With increasing breeze strength, I_scale and alpha decreased, blow increased.&nbsp;
+I_offset was set to an average value to prevent the amplitude from going
+to zero.
+<p>&nbsp;&nbsp;&nbsp; The advantage of using a continuous controller is
+that the limitations of the statemachine are eliminated.&nbsp; For example,
+we do not need to wait for the thermistor to fully reheat before rereading
+the ADC.&nbsp; Since we don't have a statemachine, the code is much simpler.&nbsp;
+The response of the system is also noticeably faster.
+<br>&nbsp;</p></blockquote>
+<i>packaging</i>
+<blockquote>&nbsp;&nbsp;&nbsp; One common suggestion given by several people
+in Mudd Hall was that the candle would look even better if the circuitry
+and wiring were hidden from sight.&nbsp; Using a cardboard shipping tube
+approxiamately 2 inches in diameter, it was cut to about 7 inches in height.&nbsp;
+The circuitry and the batterypack are hidden inside, with the batteries
+sitting at the bottom to serve double duty as a stabilizing weight.&nbsp;
+Using white semi-glossy paint, I applied three coats so that the exterior
+looked waxy, which gives the added effect of looking like a real candle.
+<p>&nbsp;&nbsp;&nbsp; A picture is worth a thousand words....so here's
+two!
+<br>&nbsp;
+<br>&nbsp;
+<br>
+<br>
+</p><center>
+<p><img src="./cornell_files/Image02.jpg" height="758" width="372">
+<br><b>Figure 7 </b>- The LED-candle 'burning' brightly!
+<br>(notice that it's an LED, and not a real flame)
+<br><i>(Side View)</i>
+<br><i></i>&nbsp;
+</p><p><img src="./cornell_files/Image05.jpg" height="522" width="662">
+<br><b>Figure 8</b> - The LED-flame with thermistor (the little black dot
+on the right)
+<br><i>(Top View)</i></p></center>
+
+<p><br>
+<br>
+<br>
+</p><p><a name="Code"></a><font size="+2">Code</font>
+</p><blockquote><a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//candle.c">candle.c</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(Original)
+<br><a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//newcandle.c">newcandle.c</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(Improved Statemachine)
+<br>
+            <a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//continuous.c">continuous.c</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+            (Continuous Controller) <a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//continuous.hex">hex file</a>, <a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//continuous.cof">coff 
+            file</a> </blockquote>
+
+<p><br><a name="Appendix"></a><font size="+2">Appendix</font>
+<br>&nbsp;
+</p><blockquote><a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//Appendix%20A.html">Appendix A</a>
+<br><a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//Appendix%20B.html">Appendix B</a>
+<br><a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//candle.c">Appendix C</a> (candle.c)
+<br><a href="http://people.ece.cornell.edu/land/courses/eceprojectsland/STUDENTPROJ/2001to2002/pc59//lorenzEuler.m">Appendix D</a> (lorenzEuler.m)</blockquote>
+
+<p><br><a name="References"></a><font size="+2">References</font>
+</p><blockquote>1. Fujiwara, O. and Kiyozawa, Y., �Spectral Model and Statistical
+Parameters of Biostimulation with 1/f Fluctuation Power,� in Electrical
+Engineering in Japan, vol. 121, no. 4, 1997
+<br>2. Atmel 90s8535 Manual, rev. 1041C-11/98
+<br>3. Kernighan, B. and Ritchie, D., <u>The C Programming Language: ANSI
+C Version</u>, 1998
+<br>4. Starns, S., <u>Digital Signal Analysis</u>, p.158, 1983</blockquote>
+
+<p><br><a name="Conclusion"></a><font size="+2">Conclusion</font>
+</p><blockquote>&nbsp;&nbsp;&nbsp; Each of the stated objectives has been met.&nbsp;
+The packaged candle looks convincingly real, with time variable light output,
+breeze sensors, and real-time response.
+<br>Time-variable light output was achieved by using white noise and a
+low pass filter.&nbsp; The breeze sensor was constructed using a thermistor
+and an ADC.
+<p>&nbsp;&nbsp;&nbsp;&nbsp; The final candle looks convincingly real according
+to several people in Mudd Hall.&nbsp; If time permits, I�ll measure the
+output spectrum.&nbsp; However, there�s always room for upgrades.&nbsp;
+One such upgrade would involve sensitivity controls.&nbsp; Depending on
+whether a certain say, button is pushed, the candle may be more sensitive
+to breezes in the environment.&nbsp; Another change would involve changing
+white noise to gaussian white noise.&nbsp; I believe I will implement these
+changes on my own time.</p></blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+
+
+
+</body></html>
